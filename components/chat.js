@@ -36,7 +36,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="min-w-[320px] sm:w-4/5 mx-auto">
+    <>
       <div className="mx-10 my-4 flex">
         <form onSubmit={handlePrompt}>
           <input
@@ -58,6 +58,6 @@ export default function Chat() {
       <div className="mx-10 p-1">
         <p>{response}</p>
       </div>
-    </div>
+    </>
   )
 }
