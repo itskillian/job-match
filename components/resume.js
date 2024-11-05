@@ -15,12 +15,17 @@ export default function Resume () {
   }
 
   return (
-    <>
+    <div className="mx-10 my-4 flex">
       <form method="post" encType="multipart/form-data">
         <label htmlFor="file">File</label>
-        <input type="file" id="file" name="file" />
+        <input 
+          type="file"
+          id="file"
+          name="file"
+          className="rounded-lg"
+        />
         <button>Upload</button>
       </form>
-    </>
+    </div>
   )
 }

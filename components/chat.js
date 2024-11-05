@@ -38,18 +38,21 @@ export default function Chat() {
   return (
     <>
       <div className="mx-10 my-4 flex">
-        <form onSubmit={handlePrompt}>
+        <form 
+          onSubmit={handlePrompt}
+          className="w-full"  
+        >
           <input
             type="text"
             placeholder="Enter your prompt..."
             onChange={(e) => setPrompt(e.target.value)}
             required
-            className="w-full dark:text-black"
+            className="w-full p-1 rounded-xl dark:text-black"
           />
           <button 
             type="submit" 
             disabled={loading || !prompt.trim()}
-            className="mx-1"
+            className="absolute mx-1 p-1 rounded-lg bg-slate-500"
           >
             {loading ? 'Generating...' : 'Submit'}
           </button>
