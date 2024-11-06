@@ -1,4 +1,4 @@
-// This API route handles server-side interations for OpenAI API
+// This API route handles server-side interactions for OpenAI API
 // receives requests from frontend, and returns responses
 // keeps the API key and SDK calls server-side
 

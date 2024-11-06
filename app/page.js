@@ -4,8 +4,8 @@ import Resume from "@/components/resume"
 
 export default function Home() {
   return (
-    <div className="min-w-[320px] sm:w-4/5 mx-auto">
-      <Chat />
+    <div className="flex justify-center items-center min-w-[320px] mx-auto h-screen">
+      {/* <Chat /> */}
       <Resume />
     </div>
   )
