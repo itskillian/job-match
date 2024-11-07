@@ -4,23 +4,39 @@ import { openai } from '@/app/openai';
 
 const assistantId = 'asst_xR5uh1Sq1FuBztwi5uCxnBTi';
 
-export async function POST(request) {
-  const formData = await request.formData();
-  const file = formData.get('file');
-  const url = formData.get('url');
-  const vectorStoreId = await getOrCreateVectorStore();
+export async function POST(request, response) {
+  try {
+    const formData = await request.formData();
+    const file = formData.get('file');
+    const url = formData.get('url');
+    const vectorStoreId = await getOrCreateVectorStore();
 
-  // upload using file stream
-  const openaiFile = await openai.files.create({
-    file: file,
-    purpose: 'assistants',
-  });
-  
-  // add file to vector store
-  await openai.beta.vectorStores.files.create(vectorStoreId, {
-    file_id: openaiFile.id,
-  });
-  return new Response();
+    // upload using file stream
+    const openaiFile = await openai.files.create({
+      file: file,
+      purpose: 'assistants',
+    });
+    
+    // add file to vector store
+    await openai.beta.vectorStores.files.create(vectorStoreId, {
+      file_id: openaiFile.id,
+    });
+    return new Response(JSON.stringify({
+      message: 'File and URL processed successfully',
+      fileId: openaiFile.id,
+      vectorStoreId: vectorStoreId,
+    }), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({
+      message: 'Error processing request',
+      error: error.message,
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 }
 
 //list files in assistant's vector store

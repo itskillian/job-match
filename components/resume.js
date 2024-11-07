@@ -1,31 +1,47 @@
 'use client'
 
-import { useState } from 'react';
+// import { useState } from 'react';
 
 export default function Resume () {
-  const [resume, setResume] = useState('');
+  const [file, setFile] = useState(null);
+  const [url, setUrl] = useState(null);
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // async function handleSubmit (event) {
-  //   // setLoading(true); // start loading state
-  //   // setResponse('');
-  //   const form = event.target;
-  //   const url = new URL(form.action);
-  //   const formData = new FormData(form);
-  //   const searchParameters = new URLSearchParams(formData);
+  async function handleSubmit (event) {
+    const form = event.target;
+    const formData = new FormData(form);
+    const url = form.action;
     
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json'
+        }
+      });
+      
+      // check is response is between 200-299
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-  //   console.log("Form submitted")
-  //   event.preventDefault();
-  // }
+      const data = await response.json();
+      console.log(data)
+      console.log('Form success:', data);
+      event.preventDefault();
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
 
   return (
     <div className="mx-6 my-4 p-2 rounded-xl">
       <form
-        action="/api/assistants/files"
+        action="/api/test"
         method="post"
-        // onSubmit={handleSubmit}
+        onSubmit={handleSubmit}
         encType="multipart/form-data"
         className="h-[400px] flex flex-col justify-center items-stretch"
         target="hiddenFrame"
@@ -36,6 +52,7 @@ export default function Resume () {
             type="file"
             id="file"
             name="file"
+            onChange={(e) => setFile(e.target.files[0])}
             className="w-full text-gray-500
             file:mr-4 file:py-2 file:px-4
             file:rounded-md file:border-0
@@ -48,7 +65,7 @@ export default function Resume () {
         <div className="mb-1 border border-gray-100 bg-white rounded-2xl">
           <label htmlFor="url" className="sr-only">Choose file</label>
           <input
-            type="url"
+            type="text"
             id="url"
             name="url"
             placeholder="Job Listing URL..."
