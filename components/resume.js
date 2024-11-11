@@ -1,18 +1,59 @@
 'use client'
 
-// import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function Resume () {
   const [file, setFile] = useState(null);
+  const [fileHash, setFileHash] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const [url, setUrl] = useState(null);
   const [response, setResponse] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // false to disable test API route
+  const test = false;
+
+  // TODO add vercel postgres DB for user file storage
+  // user loads page
+  // if file exists on server
+    // replace input text with file name
+    // update to state
+    // display preview
+
+  async function hashFile (file) {
+    // read and hash file
+    const arrayBuffer = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+    
+    // convert to hex string
+    const hashArray = Array.from(new Uint8Array(hashBuffer)); // Convert buffer to byte array
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // Convert bytes to hex string
+    return hashHex;
+  }
+
+  async function handleFile (event) {
+    // select file and update state
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+
+    // hash file
+    if (selectedFile) {
+      const hash = await hashFile(selectedFile);
+      setFileHash(hash);
+      console.log('File Hash:', hash);
+    }
+  }
+
   async function handleSubmit (event) {
     const form = event.target;
     const formData = new FormData(form);
-    const url = form.action;
+    const url = test ? 'api/test' : form.action;
     
+    // add file hash to request body
+    formData.append('fileHash', fileHash);
+    
+    // send file, file hash and URL in request
+    // server compares local and remote hash to api/assistant TODO
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -26,11 +67,12 @@ export default function Resume () {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+      
+      // prevent html form submission/reload
+      event.preventDefault();
 
       const data = await response.json();
-      console.log(data)
       console.log('Form success:', data);
-      event.preventDefault();
     } catch (error) {
       console.error('Error:', error);
     }
@@ -39,7 +81,7 @@ export default function Resume () {
   return (
     <div className="mx-6 my-4 p-2 rounded-xl">
       <form
-        action="/api/test"
+        action="/api/assistant"
         method="post"
         onSubmit={handleSubmit}
         encType="multipart/form-data"
@@ -52,7 +94,7 @@ export default function Resume () {
             type="file"
             id="file"
             name="file"
-            onChange={(e) => setFile(e.target.files[0])}
+            onChange={handleFile}
             className="w-full text-gray-500
             file:mr-4 file:py-2 file:px-4
             file:rounded-md file:border-0
