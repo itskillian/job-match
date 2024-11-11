@@ -5,18 +5,17 @@ import { useEffect, useState } from 'react';
 export default function Resume () {
   const [file, setFile] = useState(null);
   const [fileHash, setFileHash] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [url, setUrl] = useState(null);
-  const [response, setResponse] = useState('');
-  const [loading, setLoading] = useState(false);
+  // const [previewUrl, setPreviewUrl] = useState(null);
+  // const [url, setUrl] = useState(null);
+  // const [response, setResponse] = useState('');
+  // const [loading, setLoading] = useState(false);
 
   // false to disable test API route
   const test = false;
 
-  // TODO add vercel postgres DB for user file storage
-  // user loads page
-  // if file exists on server
-    // replace input text with file name
+  // form validation TODO
+  // TODO
+  // if file user file exists on server
     // update to state
     // display preview
 
@@ -46,15 +45,17 @@ export default function Resume () {
 
   async function handleSubmit (event) {
     const form = event.target;
+    event.preventDefault(); // prevent html form submission
+    
     const formData = new FormData(form);
     const url = test ? 'api/test' : form.action;
+
     
-    // add file hash to request body
-    formData.append('fileHash', fileHash);
-    
-    // send file, file hash and URL in request
-    // server compares local and remote hash to api/assistant TODO
     try {
+      // add file hash to request body 
+      formData.append('fileHash', fileHash); // TODO move this to api/assistant
+
+      // send request
       const response = await fetch(url, {
         method: 'POST',
         body: formData,
@@ -63,18 +64,18 @@ export default function Resume () {
         }
       });
       
-      // check is response is between 200-299
+      // check if response is between 200-299
+      // TODO improve error prop
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      // prevent html form submission/reload
-      event.preventDefault();
-
+      // check response data
       const data = await response.json();
       console.log('Form success:', data);
-    } catch (error) {
-      console.error('Error:', error);
+    } catch (err) {
+      console.error('Fetch error:', err);
+      form.submit();
     }
   }
 
