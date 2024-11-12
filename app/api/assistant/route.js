@@ -1,20 +1,19 @@
-// this API endpoint handles submitting data (file and url) to the assistant
+// this API endpoint handles form submission to the assistant
 import { fetchFileId, insertFileData } from '@/app/lib/data';
 import { openai } from '@/app/openai';
 
-const assistantId = 'asst_xR5uh1Sq1FuBztwi5uCxnBTi';
+const assistantId = 'asst_xR5uh1Sq1FuBztwi5uCxnBTi'; // TODO make into util function
 
 export async function POST(req, res) {
   try {
     // parse form data
     const formData = await req.formData();
-    const url = formData.get('url');
     const file = formData.get('file');
-    const fileHash = formData.get('fileHash');
-    console.log(fileHash);
+    const url = formData.get('url');
 
-    // get or create VectorStore
-    const vectorStoreId = await getOrCreateVectorStore();
+    // hash the file
+    const fileHash = await hashFile(file);
+    console.log('File Hash:', hash);
     
     // check file match exists in db
     let localFileId;
@@ -24,6 +23,9 @@ export async function POST(req, res) {
       console.error(err)
       throw err;
     }
+
+    // get or create VectorStore
+    const vectorStoreId = await getOrCreateVectorStore();
     
     let vectorStoreFile;
     if (localFileId) {
@@ -92,6 +94,17 @@ export async function POST(req, res) {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+}
+
+async function hashFile (file) {
+  // read and hash file
+  const arrayBuffer = await file.arrayBuffer();
+  const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+  
+  // convert to hex string
+  const hashArray = Array.from(new Uint8Array(hashBuffer)); // Convert buffer to byte array
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // Convert bytes to hex string
+  return hashHex;
 }
 
 //list files in assistant's vector store
