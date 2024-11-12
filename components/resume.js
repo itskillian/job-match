@@ -19,6 +19,7 @@ export default function Resume () {
   
   async function handleFile (event) {
     // select file and update state
+    let inputElement = event.target
     let selectedFile = event.target.files[0];
     setFile(selectedFile);
 
@@ -33,10 +34,10 @@ export default function Resume () {
     
     if (!FILE_TYPES.includes(selectedFile.type)) {
       alert('Invalid file type. Please upload PDF, DOCX, DOC or TXT file.');
-      selectedFile.value = '';
+      inputElement.value = '';
     } else if (selectedFile.size > MAX_FILE_SIZE) {
       alert('File is too large. Please select a file smaller than 5MB.');
-      selectedFile.value = '';
+      inputElement.value = '';
     }
   }
   async function handleSubmit (event) {
@@ -74,13 +75,13 @@ export default function Resume () {
   }
 
   return (
-    <div className="mx-6 my-4 p-2 rounded-xl">
+    <div className="flex justify-center mx-6 my-4 p-2 rounded-xl w-full">
       <form
         action="/api/assistant"
         method="post"
         onSubmit={handleSubmit}
         encType="multipart/form-data"
-        className="h-[400px] flex flex-col justify-center items-stretch"
+        className="h-[240px] w-full min-w-[320px] max-w-[480px] flex flex-col justify-evenly"
         target="hiddenFrame"
       >
         <div className="p-4 mb-1 border border-gray-100 bg-white rounded-2xl">
