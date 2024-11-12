@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function Resume () {
   const [file, setFile] = useState(null);
-  const [fileHash, setFileHash] = useState(null);
   // const [previewUrl, setPreviewUrl] = useState(null);
   // const [url, setUrl] = useState(null);
   // const [response, setResponse] = useState('');
@@ -13,48 +12,43 @@ export default function Resume () {
   // false to disable test API route
   const test = false;
 
-  // form validation TODO
   // TODO
-  // if file user file exists on server
-    // update to state
-    // display preview
-
-  async function hashFile (file) {
-    // read and hash file
-    const arrayBuffer = await file.arrayBuffer();
-    const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
-    
-    // convert to hex string
-    const hashArray = Array.from(new Uint8Array(hashBuffer)); // Convert buffer to byte array
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // Convert bytes to hex string
-    return hashHex;
-  }
-
+  // fetch user resume from db
+  // update to state
+  // display preview
+  
   async function handleFile (event) {
     // select file and update state
-    const selectedFile = event.target.files[0];
+    let selectedFile = event.target.files[0];
     setFile(selectedFile);
 
-    // hash file
-    if (selectedFile) {
-      const hash = await hashFile(selectedFile);
-      setFileHash(hash);
-      console.log('File Hash:', hash);
+    // file validation
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5mb
+    const FILE_TYPES = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/msword',
+      'text/plain'
+    ];
+    
+    if (!FILE_TYPES.includes(selectedFile.type)) {
+      alert('Invalid file type. Please upload PDF, DOCX, DOC or TXT file.');
+      selectedFile.value = '';
+    } else if (selectedFile.size > MAX_FILE_SIZE) {
+      alert('File is too large. Please select a file smaller than 5MB.');
+      selectedFile.value = '';
     }
   }
-
   async function handleSubmit (event) {
     const form = event.target;
     event.preventDefault(); // prevent html form submission
     
+    // form validation
     const formData = new FormData(form);
-    const url = test ? 'api/test' : form.action;
 
+    const url = test ? 'api/test' : form.action;
     
     try {
-      // add file hash to request body 
-      formData.append('fileHash', fileHash); // TODO move this to api/assistant
-
       // send request
       const response = await fetch(url, {
         method: 'POST',
