@@ -1,8 +1,9 @@
 // this API endpoint handles form submission to the assistant
 import { fetchFileId, insertFileData } from '@/app/lib/data';
-import { openai } from '@/app/openai';
+import { getOrCreateResumeAssistant, openai } from '@/app/openai/openai';
 
-const assistantId = 'asst_xR5uh1Sq1FuBztwi5uCxnBTi'; // TODO make into util function
+const assistant = getOrCreateResumeAssistant();
+const assistantId = assistant.id;
 
 export async function POST(req, res) {
   try {
@@ -138,31 +139,4 @@ export async function DELETE(request) {
   await openai.beta.vectorStores.files.del(vectorStoreId, fileId); // delete file from vector store
 
   return new Response();
-}
-
-//helper
-// getOrCreateAssistant = async () => {
-  // }
-
-// helper
-export async function getOrCreateVectorStore() {
-  //const assistantId = getOrCreateAssistant();
-  const assistant = await openai.beta.assistants.retrieve(assistantId);
-
-  // if the assistant already has a vector store, return it
-  if (assistant.tool_resources?.file_search?.vector_store_ids?.length > 0) {
-    return assistant.tool_resources.file_search.vector_store_ids[0];
-  }
-  // otherwise, create a new vector store and attatch it to the assistant
-  const vectorStore = await openai.beta.vectorStores.create({
-    name: "sample-assistant-vector-store",
-  });
-  await openai.beta.assistants.update(assistantId, {
-    tool_resources: {
-      file_search: {
-        vector_store_ids: [vectorStore.id],
-      },
-    },
-  });
-  return vectorStore.id;
 }

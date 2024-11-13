@@ -1,5 +1,5 @@
-import { openai } from '@/app/openai';
-import { getOrCreateVectorStore } from '@/app/api/assistant/route';
+import { getOrCreateResumeAssistant, openai } from '@/app/openai/openai';
+import { getOrCreateVectorStore } from '@/app/openai/openai/';
 
 export async function POST(req, res) {
   try {
@@ -42,4 +42,11 @@ export async function POST(req, res) {
       headers: { 'Content-Type': 'application/json' },
     });
   }
+}
+
+export async function GET(req, res) {
+  const assistant = await getOrCreateResumeAssistant();
+
+  //return resumeAssistant
+  return Response.json(assistant);
 }
