@@ -1,9 +1,5 @@
-// this API endpoint handles form submission to the assistant
-import { fetchFileId, insertFileData } from '@/app/lib/data';
-import { getOrCreateResumeAssistant, openai } from '@/app/openai/openai';
-
-const assistant = getOrCreateResumeAssistant();
-const assistantId = assistant.id;
+// this API endpoint to handle the assistant prompt and response
+import { openai, getOrCreateResumeAssistant, createThread, runThread } from '@/app/openai/openai';
 
 export async function POST(req, res) {
   try {
@@ -12,76 +8,21 @@ export async function POST(req, res) {
     const file = formData.get('file');
     const url = formData.get('url');
 
-    // hash the file
-    const fileHash = await hashFile(file);
-    console.log('File Hash:', hash);
-    
-    // check file match exists in db
-    let localFileId;
-    try {
-      localFileId = await fetchFileId(fileHash);
-    } catch (err) {
-      console.error(err)
-      throw err;
-    }
+    // get or create assistant
+    const assistant = await getOrCreateResumeAssistant();
 
-    // get or create VectorStore
-    const vectorStoreId = await getOrCreateVectorStore();
-    
-    let vectorStoreFile;
-    if (localFileId) {
-      // check file match exists in vector store
-      try {
-        // try retrieve remote file
-        console.log('Searching for file match in vector store...')
-        vectorStoreFile = await openai.beta.vectorStores.files.retrieve(
-          vectorStoreId,
-          localFileId
-        );
-        vectorStoreFile ? console.log('File match found in vector store.') : console.log('No file match in vector store.');
-      } catch (err) {
-        console.error();
-      }
-    }
+    // create a thread, thread vector store and upload file to thread vector store
+    const thread = await createThread(url, file);
+    // TODO getOrCreateThread
 
-    // if no file match in vector store, upload form file and add data to db
-    let remoteFileId;
-    if (!vectorStoreFile) {
-      let uploadFile;
-      try {
-        // upload file using file stream
-        console.log('Uploading file to vector store...');
-        uploadFile = await openai.files.create({
-          file: file,
-          purpose: 'assistants',
-        });
-        
-        // add file to vector store
-        await openai.beta.vectorStores.files.create(vectorStoreId, {
-          file_id: uploadFile.id,
-        });
-        console.log('Upload complete.');
-        remoteFileId = uploadFile.id
-        
-        // insert file data into db
-        console.log('Inserting file data into database...')
-        await insertFileData(remoteFileId, fileHash);
-        console.log('Insertion complete.');
-      } catch (err) {
-        console.error('Error during file upload:', { remoteFileId, fileHash, error: err});
-        throw new Error(`An unexpected error occured while uploading the file: ${remoteFileId} - ${err}`);
-      }
-    }
-    
-    // TODO
-    // send prompt to assistant
-    const fileId = remoteFileId ? remoteFileId : localFileId;
+    // run thread
+    const messages = await runThread(thread, assistant);
 
-    // TODO request success response handling
+    // console.log(messages);
+
+    // TODO request response handling
     return new Response(JSON.stringify({
-      message: 'File and URL processed successfully',
-      fileId: fileId,
-      vectorStoreId: vectorStoreId,
+      message: 'Success',
     }), {
       headers: { 'Content-Type': 'application/json' },
     });

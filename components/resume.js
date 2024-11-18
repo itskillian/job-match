@@ -62,6 +62,7 @@ export default function Resume () {
       // check if response is between 200-299
       // TODO improve error prop
       if (!response.ok) {
+        console.log(response);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
