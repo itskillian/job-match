@@ -82,10 +82,10 @@ export default function Resume () {
         method="post"
         onSubmit={handleSubmit}
         encType="multipart/form-data"
-        className="h-[240px] w-full min-w-[320px] max-w-[480px] flex flex-col justify-evenly"
+        className="w-full min-w-[320px] max-w-[480px] flex flex-col justify-evenly"
         target="hiddenFrame"
       >
-        <div className="p-4 mb-1 border border-gray-100 bg-white rounded-2xl">
+        <div className="p-4 mb-2 border border-gray-100 bg-white rounded-2xl">
           <label htmlFor="file" className="sr-only">Choose file</label>
           <input
             type="file"
@@ -101,14 +101,18 @@ export default function Resume () {
           />
         </div>
 
-        <div className="mb-1 border border-gray-100 bg-white rounded-2xl">
-          <label htmlFor="url" className="sr-only">Choose file</label>
-          <input
+        <div className="h-[140px] mb-2 border border-gray-100 bg-white rounded-2xl">
+          <label htmlFor="desc" className="sr-only">Enter Job Description</label>
+          <textarea
             type="text"
-            id="url"
-            name="url"
-            placeholder="Job Listing URL..."
-            className="w-full h-full rounded-2xl p-4 focus:outline focus:outline-1 focus:outline-gray-200"
+            id="desc"
+            name="desc"
+            placeholder="Enter Job Description..."
+            className="
+              w-full h-full p-4 rounded-2xl resize-none
+              text-sm text-gray-500
+              focus:outline focus:outline-1 focus:outline-gray-200
+            "
           />
         </div>
 
@@ -121,7 +125,7 @@ export default function Resume () {
             focus:ring-2 focus:ring-inset ring-white transition
           "
         >
-          Optimize Resume
+          Match Resume
         </button>
         <iframe name="hiddenFrame" className="hidden"></iframe>
       </form>

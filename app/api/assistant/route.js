@@ -6,34 +6,33 @@ export async function POST(req, res) {
     // parse form data
     const formData = await req.formData();
     const file = formData.get('file');
-    const url = formData.get('url');
+    const desc = formData.get('desc');
 
     // get or create assistant
     const assistant = await getOrCreateResumeAssistant();
 
     // create a thread, thread vector store and upload file to thread vector store
-    const thread = await createThread(url, file);
+    const thread = await createThread(desc, file);
     // TODO getOrCreateThread
 
     // run thread
-    const messages = await runThread(thread, assistant);
-
-    // console.log(messages);
+    const threadMessages = await runThread(thread, assistant);
 
     // TODO request response handling
     return new Response(JSON.stringify({
       message: 'Success',
+      threadMessages: threadMessages,
     }), {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (err) {
     // TODO request error response handling
     return new Response(JSON.stringify({
-      message: 'Error processing request',
-      error: err.message,
+      error: 'Error processing request',
+      details: err.message,
     }), {
-      status: 500,
       headers: { 'Content-Type': 'application/json' },
+      status: 500,
     });
   }
 }
