@@ -16,12 +16,11 @@ export async function POST(req, res) {
     // TODO getOrCreateThread
 
     // run thread
-    const threadMessages = await runThread(thread, assistant);
+    const threadMessagesData = (await runThread(thread, assistant)).data;
 
     // TODO request response handling
     return new Response(JSON.stringify({
-      message: 'Success',
-      threadMessages: threadMessages,
+      data: threadMessagesData,
     }), {
       headers: { 'Content-Type': 'application/json' },
     });

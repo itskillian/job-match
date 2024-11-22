@@ -1,21 +1,16 @@
 'use client'
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
-export default function Resume () {
+export default function Resume() {
   const [file, setFile] = useState(null);
-  // const [previewUrl, setPreviewUrl] = useState(null);
-  // const [url, setUrl] = useState(null);
-  // const [response, setResponse] = useState('');
-  // const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(null);
 
-  // false to disable test API route
-  const test = false;
+  // useEffecte
 
   // TODO
-  // fetch user resume from db
-  // update to state
-  // display preview
+  // update user resume to state and display preview
   
   async function handleFile (event) {
     // select file and update state
@@ -46,12 +41,10 @@ export default function Resume () {
     
     // form validation
     const formData = new FormData(form);
-
-    const url = test ? 'api/test' : form.action;
     
     try {
       // send request
-      const response = await fetch(url, {
+      const response = await fetch(form.action, {
         method: 'POST',
         body: formData,
         headers: {
@@ -66,9 +59,15 @@ export default function Resume () {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      // check response data
-      const data = await response.json();
-      console.log('Form success:', data);
+      // parse response and update state
+      const result = await response.json();
+      setMessage(result.data[0].content[0].text.value);
+
+      // format markdown to JSON
+      const markdownToJSON = (markdown) => {
+        const matchesMarkdown = markdown.match(/Matches:\n([\s\S]*?)(?=^Missing:|$)/m);
+        const missingMarkdown = markdown.match(/Missing:\n([\s\S]*)/m);
+      }
     } catch (err) {
       console.error('Fetch error:', err);
       form.submit();
@@ -76,59 +75,67 @@ export default function Resume () {
   }
 
   return (
-    <div className="flex justify-center mx-6 my-4 p-2 rounded-xl w-full">
-      <form
-        action="/api/assistant"
-        method="post"
-        onSubmit={handleSubmit}
-        encType="multipart/form-data"
-        className="w-full min-w-[320px] max-w-[480px] flex flex-col justify-evenly"
-        target="hiddenFrame"
-      >
-        <div className="p-4 mb-2 border border-gray-100 bg-white rounded-2xl">
-          <label htmlFor="file" className="sr-only">Choose file</label>
-          <input
-            type="file"
-            id="file"
-            name="file"
-            onChange={handleFile}
-            className="w-full text-gray-500
-            file:mr-4 file:py-2 file:px-4
-            file:rounded-md file:border-0
-            file:text-sm file:font-semibold
-            file:bg-blue-50 file:text-gray-700
-            hover:file:bg-blue-100"
-          />
-        </div>
-
-        <div className="h-[140px] mb-2 border border-gray-100 bg-white rounded-2xl">
-          <label htmlFor="desc" className="sr-only">Enter Job Description</label>
-          <textarea
-            type="text"
-            id="desc"
-            name="desc"
-            placeholder="Enter Job Description..."
-            className="
-              w-full h-full p-4 rounded-2xl resize-none
-              text-sm text-gray-500
-              focus:outline focus:outline-1 focus:outline-gray-200
-            "
-          />
-        </div>
-
-        <button 
-          type="submit" 
-          className="
-            p-4 rounded-xl 
-            bg-indigo-50 text-indigo-400 text-sm font-bold
-            hover:bg-indigo-100
-            focus:ring-2 focus:ring-inset ring-white transition
-          "
+    <>
+      <div className="w-full flex justify-center my-4 rounded-xl">
+        <form
+          action="/api/assistant"
+          method="post"
+          onSubmit={handleSubmit}
+          encType="multipart/form-data"
+          className="w-full flex flex-col justify-evenly"
+          target="hiddenFrame"
         >
-          Match Resume
-        </button>
-        <iframe name="hiddenFrame" className="hidden"></iframe>
-      </form>
-    </div>
-  )
+          <div className="p-4 mb-2 border border-gray-100 bg-white rounded-2xl">
+            <label htmlFor="file" className="sr-only">Choose file</label>
+            <input
+              type="file"
+              id="file"
+              name="file"
+              onChange={handleFile}
+              className="w-full text-gray-500
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-md file:border-0
+              file:text-sm file:font-semibold
+              file:bg-blue-50 file:text-gray-700
+              hover:file:bg-blue-100"
+            />
+          </div>
+
+          <div className="h-[140px] mb-2 border border-gray-100 bg-white rounded-2xl">
+            <label htmlFor="desc" className="sr-only">Enter Job Description</label>
+            <textarea
+              type="text"
+              id="desc"
+              name="desc"
+              placeholder="Enter Job Description..."
+              className="
+                w-full h-full p-4 rounded-2xl resize-none
+                text-sm text-gray-500
+                focus:outline focus:outline-1 focus:outline-gray-200
+              "
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            className="
+              p-4 rounded-xl 
+              bg-indigo-50 text-indigo-400 text-sm font-bold
+              hover:bg-indigo-100
+              focus:ring-2 focus:ring-inset ring-white transition
+            "
+          >
+            Match Resume
+          </button>
+          <iframe name="hiddenFrame" className="hidden"></iframe>
+        </form>
+      </div>
+      
+      <div className='w-full my-4 rounded-xl'>
+        <ReactMarkdown>
+          {message}
+        </ReactMarkdown>
+      </div>
+    </>
+  )  
 }
