@@ -112,7 +112,7 @@ export async function createThread(url, file) {
 export async function runThread(thread, assistant) {
   console.log('Running thread...');
   
-  let messages;
+  let threadMessages;
   try {
     const run = await openai.beta.threads.runs.createAndPoll(
       thread.id,
@@ -121,13 +121,10 @@ export async function runThread(thread, assistant) {
 
     if (run.status === 'completed') {
       console.log('Run complete');
-      messages = await openai.beta.threads.messages.list(
+      threadMessages = await openai.beta.threads.messages.list(
         thread.id,
         { run_id: run.id }
       );
-      for (const message of messages.data.reverse()) {
-        console.log(`${message.role} > ${message.content[0].text.value}`);
-      }
     } else {
       console.log(run.status);
     }
@@ -136,17 +133,5 @@ export async function runThread(thread, assistant) {
     throw new Error(`An error occurred while running the thread: ${thread.id} - ${err}`);
   }
 
-  return messages;
+  return threadMessages;
 }
-
-// streaming messages code
-// if (streaming) {
-//   const stream = await openai.beta.threads.runs.create(
-//     thread.id, 
-//     { assistant_id: assistant.id, stream: true }
-//   );
-  
-//   for await (const event of stream) {
-//     console.log(event);
-//   }
-// }
