@@ -19,7 +19,7 @@ export async function getOrCreateResumeAssistant() {
     // import instructions
     const filePath = path.join(process.cwd(), 'app', 'openai', 'instructions.txt');
     const instructions = fs.readFileSync(filePath, 'utf-8');
-  
+
     // create new assistant
     resumeAssistant = await openai.beta.assistants.create({
       name: assistantName,
@@ -30,6 +30,7 @@ export async function getOrCreateResumeAssistant() {
           vector_stores: [],
         }
       },
+      temperature: 0.2,
       model: 'gpt-4o-mini'
     });
     

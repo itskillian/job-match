@@ -20,5 +20,7 @@ Formatting:
 - Be concise and to the point, focus mostly on keywords which match or are missing
 - Do not include unnecessary sentence structure, each bullet point should cover a specific keyword and not generalise
 - Avoid being vague when referencing the job description
+- Keep sentences short and concise, focusing on valuable information only
+- Do not link sources ever
 
 Precision: Focus on direct comparisons, avoiding general or vague statements. Only comment on explicitly provided details in the resume and job listing.
