@@ -11,9 +11,6 @@ importers:
       '@vercel/postgres':
         specifier: ^0.10.0
         version: 0.10.0
-      marked:
-        specifier: ^15.0.1
-        version: 15.0.2
       next:
         specifier: ^15.0.3
         version: 15.0.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -29,9 +26,6 @@ importers:
       react-markdown:
         specifier: ^9.0.1
         version: 9.0.1(@types/react@18.3.12)(react@18.3.1)
-      zod:
-        specifier: ^3.23.8
-        version: 3.23.8
     devDependencies:
       eslint:
         specifier: ^8.57.1
@@ -1258,11 +1252,6 @@ packages:
 
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
-
-  marked@15.0.2:
-    resolution: {integrity: sha512-85RUkoYKIVB21PbMKrnD6aCl9ws+XKEyhJNMbLn206NyD3jbBo7Ec7Wi4Jrsn4dV1a2ng7K/jfkmIN0DNoS41w==}
-    engines: {node: '>= 18'}
-    hasBin: true
 
   mdast-util-from-markdown@2.0.2:
     resolution: {integrity: sha512-uZhTV/8NBuw0WHkPTrCqDOl0zVe1BIng5ZtHoDk49ME1qqcjYmmLmOf0gELgcRMxN4w2iuIeVso5/6QymSrgmA==}
@@ -3405,8 +3394,6 @@ snapshots:
 
   lru-cache@10.4.3: {}
 
-  marked@15.0.2: {}
-
   mdast-util-from-markdown@2.0.2:
     dependencies:
       '@types/mdast': 4.0.4
@@ -4426,6 +4413,7 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod@3.23.8: {}
+  zod@3.23.8:
+    optional: true
 
   zwitch@2.0.4: {}
