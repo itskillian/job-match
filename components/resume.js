@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import Markdown from 'react-markdown';
 
 export default function Resume() {
   const [file, setFile] = useState(null);
-  const [message, setMessage] = useState(null);
-
-  // useEffecte
+  const [message, setMessage] = useState('');
+  const [matches, setMatches] = useState('');
+  const [missing, setMissing] = useState('');
 
   // TODO
   // update user resume to state and display preview
@@ -63,14 +64,19 @@ export default function Resume() {
       const result = await response.json();
       setMessage(result.data[0].content[0].text.value);
 
+      const resultMessage = result.data[0].content[0].text.value;
+
       // format markdown to JSON
-      const markdownToJSON = (markdown) => {
-        const matchesMarkdown = markdown.match(/Matches:\n([\s\S]*?)(?=^Missing:|$)/m);
-        const missingMarkdown = markdown.match(/Missing:\n([\s\S]*)/m);
-      }
+      // const matchesMarkdown = resultMessage.match(/Matches:\n([\s\S]*?)(?=^Missing:|$)/m)?.[1].trim();
+      // const missingMarkdown = resultMessage.match(/Missing:\n([\s\S]*)/m)?.[1].trim();
+
+      // setMatches(matchesMarkdown);
+      // setMissing(missingMarkdown);
+      
     } catch (err) {
-      console.error('Fetch error:', err);
-      form.submit();
+      console.error('Error submitting form:', err);
+      setMessage('An error occurred. Please try again');
+      // form.submit();
     }
   }
 
@@ -132,7 +138,22 @@ export default function Resume() {
       </div>
       
       <div className='w-full my-4 rounded-xl'>
-        <ReactMarkdown>
+        <ReactMarkdown
+          components={{
+            h1: ({ node, ...props }) => <h1 className="text-blue-500" {...props} />,
+            p: ({ node, ...props }) => <p className="text-gray-700" {...props} />,
+            ul: ({ node, ...props }) => (
+              <ul
+                className={
+                  node.position.start.offset < message.indexOf('Missing:')
+                    ? 'text-green-500'
+                    : 'text-red-500'
+                }
+                {...props}
+              />
+            ),
+          }}
+        >
           {message}
         </ReactMarkdown>
       </div>
