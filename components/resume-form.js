@@ -92,7 +92,7 @@ export default function ResumeForm() {
           method='post' 
           onSubmit={form.handleSubmit(onSubmit)} 
           encType='multipart/form-data'
-          className='space-y-4 w-full'
+          className='space-y-2 w-full'
           // target='hiddenFrame'
         >
           <FormField
