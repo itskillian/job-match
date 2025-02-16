@@ -173,14 +173,14 @@ export default function ResumeForm() {
         <ReactMarkdown
             components={{
               h1: ({ node, ...props }) => <h1 className='text-blue-500' {...props} />,
-              p: ({ node, ...props }) => <p className='text-slate-900 dark:text-slate-100 py-4' {...props} />,
+              p: ({ node, ...props }) => <p className='text-slate-900 dark:text-slate-200 py-4' {...props} />,
               ul: ({ node, ...props }) => (
                 <ul
                   className=
                   {
                     node.position.start.offset < message.indexOf('Missing:')
-                      ? 'bg-green-50 dark:bg-green-950 rounded-3xl p-4 text-sm'
-                      : 'bg-red-50 dark:bg-red-950 rounded-3xl p-4 text-sm'
+                      ? 'bg-green-50 dark:bg-slate-950 border border-green-500 rounded-3xl p-4 text-sm dark:text-slate-300'
+                      : 'bg-red-50 dark:bg-slate-950 border border-red-500 rounded-3xl p-4 text-sm dark:text-slate-300'
                   }
                   {...props}
                 />

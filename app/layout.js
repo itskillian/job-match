@@ -8,7 +8,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang='en' suppressHydrationWarning>
-      <body>
+      <body className='dark:bg-gray-900'>
         <ThemeProvider
           attribute='class'
           defaultTheme='system'
